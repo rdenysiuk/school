@@ -1,41 +1,49 @@
-<html>
+<html lang="uk">
     <head>
         <title>Школа №22: Таблиця множення</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://kit.fontawesome.com/389956032b.js" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <style type="text/css">
         @import url('https://fonts.googleapis.com/css?family=Roboto');
-        body {
-            font-family: 'Roboto', sans-serif;
-            font-size: 1rem;
-            line-height: 1.6;
-            background-color: #fff;
-            color: #333;
+            body {
+                font-family: 'Roboto', sans-serif;
+                font-size: 1rem;
+                line-height: 1.6;
+                background-color: #fff;
+                color: #333;
+                }
+            .mulcontainer { width:100%; max-width: 1080px; height: 100%; max-height: 450px; 
+                display: grid; grid-template-columns: 1fr 1fr 1fr;
+                grid-template-rows: 23px 70px 100px 1fr 1fr 1fr 1fr ;
             }
-        .mulcontainer { width:100%; max-width: 1080px; height: 100%; max-height: 500px; 
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 70px 100px 1fr 1fr 1fr 1fr ;
-        }
-        
-        .box { font-size: 70px; border-width:0 2px 2px 0; border-style:solid; border-color:  gray; 
-        background-color: lightgray; margin: 1px; text-align: center; vertical-align: middle; display: table-cell;}
-        .box:active { border-width: 2px 0 0 2px; margin-right: 4px; position: relative; left: 1px;}        
-        .zero{ grid-column-start: 1; grid-column-end: 3; }
-        .example {grid-column-start: 1; grid-column-end: 3; text-align: right; vertical-align: middle;}        
-        .example, #result {font-weight: bold;  font-size:70px;}
-        #result { width:100%; height: 100%;}
-        .log{ background-color: #f8f9fa; text-align: center;}
-        .fail{background-color: #dc3545;} .fail, .success {color: white; font-size: 45px; text-align: center;}
-        .success{background-color: #28a745;}
-
+            
+            .box { font-size: 65px; border-width:0 2px 2px 0; border-style:solid; border-color:  gray; 
+            background-color: lightgray; margin: 1px; text-align: center; vertical-align: middle; display: table-cell;}
+            .box:active { border-width: 2px 0 0 2px; margin-right: 4px; position: relative; left: 1px;} 
+            .example { grid-column-start: 1; grid-column-end: 3; text-align: right; vertical-align: middle;}        
+            .example, #result { font-weight: bold;  font-size:70px;}
+            #result { width:100%; height: 100%;}
+            .log { background-color: #f8f9fa; text-align: center;}
+            .fail {background-color: #dc3545;} .fail, .success {color: white; font-size: 45px; text-align: center;}
+            .success {background-color: #28a745;}
+            .txt-center {text-align: center;}
+            .txt-green { color: #28a745;} .txt-red { color: #dc3545;}
         </style>
     </head>
     <body>
         <a href="\index.html" title="На головну">&lt;&lt;На головну</a>
 
         <div class="mulcontainer">
+            <div class="txt-center txt-green">
+                <span>вірно</span>
+            </div>
+            <div></div>
+            <div class="txt-center txt-red">
+                <span>НЕ вірно</span>
+            </div>
             <div class="success">0</div>
             <div class="log"></div>
             <div class="fail">0</div>
@@ -54,8 +62,11 @@
             <div class="box">1</div>
             <div class="box">2</div>
             <div class="box">3</div>
+            <div class="box clear" style="padding-top: 15px;" title="Очистити результат">
+                <i class="fas fa-backspace"></i>
+            </div>
             <div class="box zero" number="0">0</div>
-            <div class="box check" style="padding-top: 15px;">
+            <div class="box check" style="padding-top: 15px;" title="Перевірити результат">
                 <i class="fas fa-check"></i>
             </div>
         </div>
@@ -76,10 +87,13 @@
             $('div.check').click(function(){                
                 
                 var result = $('#result').val();
-                if(window.execise[1] == result) 
+                if(window.execise[1] == result) {
                     addSuccess();
-                else
+                    runEffect('div.success');
+                } else {
                     addFail();
+                    runEffect('div.fail');
+                }
                 
                 $('div.log').html(window.execise[0] + ' ' + window.execise[1]);
                 $('#example').html();
@@ -88,7 +102,20 @@
             });
 
             exampleAgaine();
+            $('div.clear').click(function(){
+                var result = $('#result').val().trim();
+                $('#result').val(result.substring(0, result.length - 1));
+            });
         });        
+        function runEffect(element){
+            self = element;
+            $(element).effect( 'pulsate', null, 500, effectCallback );
+        }        
+        function effectCallback(element){
+            setTimeout(function() {
+                $(self).removeAttr("style").hide().fadeIn();
+            }, 1000 );
+        }
         function exampleAgaine()
         {
             window.execise = generateExample(5);
@@ -97,11 +124,13 @@
         
         function addSuccess(){
             var success = parseInt($('div.success').text());
-            $('div.success').text(success +1 );
+            $('div.success').text(success + 1);
+            $('div.log').removeClass('txt-red');
         }
         function addFail(){
             var fail = parseInt($('div.fail').text());
-            $('div.fail').text(fail +1 );
+            $('div.fail').text(fail + 1);            
+            $('div.log').addClass('txt-red');
         }
         function generateExample(maxNumber)
         {
@@ -109,7 +138,7 @@
             var m2 = random(1, 9);
             return [
                 m1 + '&nbsp;' + '&bull;' + '&nbsp;' + m2 + ' =',
-                m1*m2
+                m1 * m2
             ];
         }
         function random(min, max) { // min and max included 
@@ -120,12 +149,9 @@
             $("#result").keydown(function(e){
                 var key = e.charCode || e.keyCode || 0;
                 return (
-                key == 8 || 
-                key == 9 ||
-                key == 13 ||
-                key == 46 ||
-                key == 110 ||
-                key == 190 ||
+                key == 8 || key == 9 ||
+                key == 13 || key == 46 ||
+                key == 110 || key == 190 ||
                 (key >= 35 && key <= 40) ||
                 (key >= 48 && key <= 57) ||
                 (key >= 96 && key <= 105));
@@ -133,5 +159,4 @@
         }
         </script>
     </body>
-
 </html>
