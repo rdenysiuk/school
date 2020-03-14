@@ -1,2 +1,2 @@
 # school
-simple html page for repeat school material
+simple HTML pages that will help in repeating school material
