@@ -1,0 +1,137 @@
+<html>
+    <head>
+        <title>Школа №22: Таблиця множення</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://kit.fontawesome.com/389956032b.js" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <style type="text/css">
+        @import url('https://fonts.googleapis.com/css?family=Roboto');
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            background-color: #fff;
+            color: #333;
+            }
+        .mulcontainer { width:100%; max-width: 1080px; height: 100%; max-height: 500px; 
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 70px 100px 1fr 1fr 1fr 1fr ;
+        }
+        
+        .box { font-size: 70px; border-width:0 2px 2px 0; border-style:solid; border-color:  gray; 
+        background-color: lightgray; margin: 1px; text-align: center; vertical-align: middle; display: table-cell;}
+        .box:active { border-width: 2px 0 0 2px; margin-right: 4px; position: relative; left: 1px;}        
+        .zero{ grid-column-start: 1; grid-column-end: 3; }
+        .example {grid-column-start: 1; grid-column-end: 3; text-align: right; vertical-align: middle;}        
+        .example, #result {font-weight: bold;  font-size:70px;}
+        #result { width:100%; height: 100%;}
+        .log{ background-color: #f8f9fa; text-align: center;}
+        .fail{background-color: #dc3545;} .fail, .success {color: white; font-size: 45px; text-align: center;}
+        .success{background-color: #28a745;}
+
+        </style>
+    </head>
+    <body>
+        <a href="\index.html" title="На головну">&lt;&lt;На головну</a>
+
+        <div class="mulcontainer">
+            <div class="success">0</div>
+            <div class="log"></div>
+            <div class="fail">0</div>
+            <div class="example">
+                <span id="example"></span>
+            </div>
+            <div style="vertical-align: middle;">
+                <input type="text" id="result" maxlength="3" inputmode="numeric" pattern="[0-9]*">
+            </div>
+            <div class="box">7</div>
+            <div class="box">8</div>
+            <div class="box">9</div>
+            <div class="box">4</div>
+            <div class="box">5</div>
+            <div class="box">6</div>
+            <div class="box">1</div>
+            <div class="box">2</div>
+            <div class="box">3</div>
+            <div class="box zero" number="0">0</div>
+            <div class="box check" style="padding-top: 15px;">
+                <i class="fas fa-check"></i>
+            </div>
+        </div>
+        <script type="text/javascript">
+        var array = [1,2,3,4,5,6,7,8,9];
+        var stat = { "excecises": 0, 'correct':0, "failed":0 };
+
+        $().ready(function(){
+            $('#result').focus();
+            onlyNumbers();
+
+            $('div.box:not(.check)').click(function(){
+                var n = $('#result').val();
+                if(n.length > 3) return;
+                $('#result').val(n + $(this).text());
+            })
+            
+            $('div.check').click(function(){                
+                
+                var result = $('#result').val();
+                if(window.execise[1] == result) 
+                    addSuccess();
+                else
+                    addFail();
+                
+                $('div.log').html(window.execise[0] + ' ' + window.execise[1]);
+                $('#example').html();
+                $('#result').val('');
+                exampleAgaine();
+            });
+
+            exampleAgaine();
+        });        
+        function exampleAgaine()
+        {
+            window.execise = generateExample(5);
+            $('#example').html(window.execise[0]);
+        }
+        
+        function addSuccess(){
+            var success = parseInt($('div.success').text());
+            $('div.success').text(success +1 );
+        }
+        function addFail(){
+            var fail = parseInt($('div.fail').text());
+            $('div.fail').text(fail +1 );
+        }
+        function generateExample(maxNumber)
+        {
+            var m1 = random(1, maxNumber);
+            var m2 = random(1, 9);
+            return [
+                m1 + '&nbsp;' + '&bull;' + '&nbsp;' + m2 + ' =',
+                m1*m2
+            ];
+        }
+        function random(min, max) { // min and max included 
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+        function onlyNumbers()
+        {
+            $("#result").keydown(function(e){
+                var key = e.charCode || e.keyCode || 0;
+                return (
+                key == 8 || 
+                key == 9 ||
+                key == 13 ||
+                key == 46 ||
+                key == 110 ||
+                key == 190 ||
+                (key >= 35 && key <= 40) ||
+                (key >= 48 && key <= 57) ||
+                (key >= 96 && key <= 105));
+            })
+        }
+        </script>
+    </body>
+
+</html>
