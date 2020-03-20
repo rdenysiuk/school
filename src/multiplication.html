@@ -4,10 +4,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://kit.fontawesome.com/389956032b.js" crossorigin="anonymous"></script>
+        <script src="timer.js" ></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>       
         <style type="text/css">
-        @import url('https://fonts.googleapis.com/css?family=Roboto');
+            @import url('https://fonts.googleapis.com/css?family=Roboto');
             body {
                 font-family: 'Roboto', sans-serif;
                 font-size: 1rem; line-height: 1.6;                
@@ -17,17 +19,14 @@
                 display: grid; grid-template-columns: 1fr 1fr 1fr;
                 grid-template-rows: 23px 70px 100px 1fr 1fr 1fr 1fr ;
             }
-            
-            .box { font-size: 65px; border-width:0 2px 2px 0; border-style:solid; border-color:  gray; 
-            background-color: lightgray; margin: 1px; text-align: center; vertical-align: middle; display: table-cell;}
-            .box:active { border-width: 2px 0 0 2px; margin-right: 4px; position: relative; left: 1px;} 
+            input[type=button] {font-size: 65px;}
             .example { grid-column-start: 1; grid-column-end: 3; text-align: right; vertical-align: middle;}        
             .example, #result { font-weight: bold;  font-size:70px;}
             #result { width:100%; height: 100%;color: #333;max-height: 105px;}
             .log { background-color: #f8f9fa; text-align: center;}
             .fail {background-color: #dc3545;} .fail, .success {color: white; font-size: 45px; text-align: center;}
             .success {background-color: #28a745;}
-            .txt-center {text-align: center;}
+            .txt-center {text-align: center;} #timer{color: #333; font-size: 18px; font-weight: bold; }
             .txt-green { color: #28a745;} .txt-red { color: #dc3545;}
         </style>
     </head>
@@ -38,7 +37,7 @@
             <div class="txt-center txt-green">
                 <span>вірно</span>
             </div>
-            <div></div>
+            <div id="timer" class='txt-center'>10:00</div>
             <div class="txt-center txt-red">
                 <span>НЕ вірно</span>
             </div>
@@ -51,38 +50,38 @@
             <div style="vertical-align: middle;">
                 <input type="text" id="result" maxlength="3" inputmode="numeric" pattern="[0-9]*">
             </div>
-            <div class="box">7</div>
-            <div class="box">8</div>
-            <div class="box">9</div>
-            <div class="box">4</div>
-            <div class="box">5</div>
-            <div class="box">6</div>
-            <div class="box">1</div>
-            <div class="box">2</div>
-            <div class="box">3</div>
-            <div class="box clear" style="padding-top: 15px;" title="Очистити результат">
-                <i class="fas fa-backspace"></i>
-            </div>
-            <div class="box zero" number="0">0</div>
-            <div class="box check" style="padding-top: 15px;" title="Перевірити результат">
-                <i class="fas fa-check"></i>
-            </div>
+            <input type="button" value="7">
+            <input type="button" value="8">
+            <input type="button" value="9">
+            <input type="button" value="4">
+            <input type="button" value="5">
+            <input type="button" value="6">
+            <input type="button" value="1">
+            <input type="button" value="2">
+            <input type="button" value="3">
+            <input type="button" value="&#9664;" id="clear">
+            <input type="button" value="0" >           
+            <input type="button" value="&#10004;" id="check">
         </div>
-        <script type="text/javascript">
-        var array = [1,2,3,4,5,6,7,8,9];
+        <div id="dialog-message" title="Час вичерпано">            
+            <p>
+              Час вичерпано. Трішки можна відпочити :-)
+            </p>
+          </div>
+        <script type="text/javascript">        
         var stat = { "excecises": 0, 'correct':0, "failed":0 };
 
         $().ready(function(){
             $('#result').focus();
             onlyNumbers();
 
-            $('div.box:not(.check)').click(function(){
+            $('input[type=button]:not(#check,#clear)').click(function(){
                 var n = $('#result').val();
                 if(n.length > 3) return;
-                $('#result').val(n + $(this).text());
+                $('#result').val(n + $(this).val());
             })
             
-            $('div.check').click(function(){                
+            $('input#check').click(function(){                
                 
                 var result = $('#result').val();
                 if(window.execise[1] == result) {
@@ -100,11 +99,31 @@
             });
 
             exampleAgaine();
-            $('div.clear').click(function(){
+            $('input#clear').click(function(){
                 var result = $('#result').val().trim();
                 $('#result').val(result.substring(0, result.length - 1));
             });
-        });        
+            
+            $( "#dialog-message" ).dialog({
+                autoOpen: false,
+                modal: true,
+                buttons: {
+                    Ok: function() { $( this ).dialog( "close" ); }
+                }
+            });
+
+            setTimeout(
+                startTimer(10, whenTimerEnd),
+                1500
+            );
+
+        });   
+        function whenTimerEnd()
+        {
+            $("#dialog-message" ).dialog('open');
+            $("input#check").prop('disabled', true);
+
+        }
         function runEffect(element){
             $(element).effect( 'pulsate', null, 500, null );
         }                
@@ -151,4 +170,5 @@
         }
         </script>
     </body>
+    
 </html>
