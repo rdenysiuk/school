@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://kit.fontawesome.com/389956032b.js" crossorigin="anonymous"></script>
         <script src="timer.js" ></script>
+        <script src="cookieManager.js"></script>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>       
@@ -37,7 +38,7 @@
             <div class="txt-center txt-green">
                 <span>вірно</span>
             </div>
-            <div id="timer" class='txt-center'>10:00</div>
+            <div id="timer" class='txt-center'></div>
             <div class="txt-center txt-red">
                 <span>НЕ вірно</span>
             </div>
@@ -63,13 +64,10 @@
             <input type="button" value="0" >           
             <input type="button" value="&#10004;" id="check">
         </div>
-        <div id="dialog-message" title="Час вичерпано">            
-            <p>
-              Час вичерпано. Трішки можна відпочити :-)
-            </p>
+        <div id="dialog-message" title="Час вичерпано">        
           </div>
         <script type="text/javascript">        
-        var stat = { "excecises": 0, 'correct':0, "failed":0 };
+        var stat = { "excecises": 0, "correct": 0 };
 
         $().ready(function(){
             $('#result').focus();
@@ -81,8 +79,7 @@
                 $('#result').val(n + $(this).val());
             })
             
-            $('input#check').click(function(){                
-                
+            $('input#check').click(function(){
                 var result = $('#result').val();
                 if(window.execise[1] == result) {
                     addSuccess();
@@ -104,25 +101,26 @@
                 $('#result').val(result.substring(0, result.length - 1));
             });
             
-            $( "#dialog-message" ).dialog({
+            $("#dialog-message").dialog({
                 autoOpen: false,
                 modal: true,
-                buttons: {
-                    Ok: function() { $( this ).dialog( "close" ); }
-                }
+                buttons: { Ok: function() { $( this ).dialog( "close" ); }}
             });
-
             setTimeout(
                 startTimer(10, whenTimerEnd),
                 1500
             );
-
         });   
         function whenTimerEnd()
         {
+            $('#dialog-message').html(
+                '<p>Час вичерпано. <br/>'+
+                '<b>ВСЬОГО прикладів: ' + stat.excecises + '</b><br/>' +
+                "<span style='color:#28a745'>Вірно: " + stat.correct + "</span><br/>" +
+                "<span style='color:#dc3545'>НЕ вірно: " + (stat.excecises - stat.correct) +'</span></p>'
+            );
             $("#dialog-message" ).dialog('open');
             $("input#check").prop('disabled', true);
-
         }
         function runEffect(element){
             $(element).effect( 'pulsate', null, 500, null );
@@ -131,14 +129,16 @@
         {
             window.execise = generateExample(5);
             $('#example').html(window.execise[0]);
-        }
-        
+        }        
         function addSuccess(){
+            stat.excecises = stat.excecises + 1;
+            stat.correct = stat.correct + 1;
             var success = parseInt($('div.success').text());
             $('div.success').text(success + 1);
             $('div.log').removeClass('txt-red');
         }
-        function addFail(){
+        function addFail(){            
+            stat.excecises = stat.excecises + 1;
             var fail = parseInt($('div.fail').text());
             $('div.fail').text(fail + 1);            
             $('div.log').addClass('txt-red');
@@ -169,6 +169,5 @@
             })
         }
         </script>
-    </body>
-    
+    </body>    
 </html>
